@@ -5,6 +5,10 @@ const app = express();
 // ทุก ๆ request จะเข้ามาที่ use, ใช้สำหรับสร้าง middleware
 // middleware ฟังชันก์ที่จะถูกเรียกใช้เมื่อมี request เข้ามา
 app.use(express.json()); // ทำให้สามารถอ่าน json object จาก body ได้
+app.use((req, res, next) => {
+    console.log(req.method + " " + req.url);
+    next();
+});
 
 const PORT = 3001;
 app.listen(PORT, () => {
@@ -22,7 +26,11 @@ const groceries = [
     }
 ];
 
-app.get("/groceries", (req, res) => {
+app.get("/groceries", (req, res, next) => {
+    // ถูกเรียกใช้งานก่อนเข้าไปทำ request
+    console.log("Before Handing Request");
+    next();
+}, (req, res, next) => {
     /* 
         get
             ใช้สำหรับการร้องขอข้อมูล
@@ -31,8 +39,15 @@ app.get("/groceries", (req, res) => {
             ใช้ดูรายละเอียดคำขอที่ถูกส่งข้อมาที่ server
         response
             ใช้จัดการกับการตอบกลับไปที่ client
+        next
+            ทำให้เราทำ request ต่อไป
     */
+
     res.send(groceries);
+    next();
+}, () => {
+    // ทำงานหลัง request ทำเสร็จ
+    console.log("After Handing Request");
 });
 
 app.post("/groceries", (req, res) => {
@@ -41,5 +56,3 @@ app.post("/groceries", (req, res) => {
 
     res.send(201) // 201 created
 });
-
-// https://www.youtube.com/watch?v=o4RLiTIOfhQ&list=PL_cUvD4qzbkwp6pxx27pqgohrsP8v1Wj2&index=5
