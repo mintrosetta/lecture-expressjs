@@ -50,9 +50,16 @@ app.get("/groceries", (req, res, next) => {
     console.log("After Handing Request");
 });
 
+app.get("/groceries/:item", (req, res) => {
+    const { item } = req.params;
+
+    res.send(groceries[item]);
+});
+
 app.post("/groceries", (req, res) => {
     console.log(req.body); // ดึงข้อมูลใน body
     groceries.push(req.body);
 
     res.send(201) // 201 created
 });
+
