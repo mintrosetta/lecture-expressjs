@@ -1,4 +1,5 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 
 const groceriesRoute = require("./routes/groceries");
 const marketRoute = require("./routes/market");
@@ -12,6 +13,7 @@ app.use((req, res, next) => {
     console.log(req.method + " " + req.url);
     next();
 });
+app.use(cookieParser());
 
 app.use("/api/groceries", groceriesRoute);
 app.use("/api/markets", marketRoute);

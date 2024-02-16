@@ -30,6 +30,14 @@ router.get("", (req, res, next) => {
             ทำให้เราทำ request ต่อไป
     */
 
+    // สร้าง cookie ขึ้นมาและส่งไปให้ client ถือ
+    res.cookie("visited", true, {
+        maxAge: 60000 // วันหมดอายุของ cookie, มิลลิวินาที
+    });
+    res.cookie("token", "620107030012", {
+        maxAge: 60000
+    });
+
     res.send(groceries);
     next();
 }, () => {
@@ -39,6 +47,12 @@ router.get("", (req, res, next) => {
 
 router.get("/:item", (req, res) => {
     const { item } = req.params;
+
+    // ดึง cookie ที่เก็บอยู่ที่ฝั่ง client, โดยจะเป็นการดึง string มี่เก็บ cookie ทั้งหมด ต้องนำมาแยกเอง
+    console.log(req.headers.cookie);
+
+    // ดึง cookie ที่เก็บอยู่ที่ฝั่ง client, โดยใช้ cookie parser โดยมันจะแบกเป็น object ให้เรา
+    console.log(req.cookies);
 
     res.send(groceries[item]);
 });
