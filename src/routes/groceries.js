@@ -13,6 +13,14 @@ const groceries = [
     }
 ];
 
+router.use((req, res, next) => {
+    if (req.session.user) {
+        next();
+    } else {
+        res.send(401);
+    }
+});
+
 router.get("", (req, res, next) => {
     // ถูกเรียกใช้งานก่อนเข้าไปทำ request
     console.log("Before Handing Request");

@@ -4,6 +4,7 @@ const session = require("express-session");
 
 const groceriesRoute = require("./routes/groceries");
 const marketRoute = require("./routes/market");
+const authRoute = require("./routes/auth");
 
 const app = express();
 
@@ -19,8 +20,9 @@ app.use(session({
     secret: "MintRosetta", // ใช้สำหรับเข้ารหัส session ของเรา
     resave: false,
     saveUninitialized: false,
-}))
+}));
 
+app.use("/api/auth", authRoute);
 app.use("/api/groceries", groceriesRoute);
 app.use("/api/markets", marketRoute);
 
@@ -29,7 +31,7 @@ app.listen(PORT, () => {
     console.log(`Running nodejs server at http://localhost:${PORT}`);
 });
 
-//https://www.youtube.com/watch?v=74bz-GuXfWA&list=PL_cUvD4qzbkwp6pxx27pqgohrsP8v1Wj2&index=7
+// https://www.youtube.com/watch?v=o1g7ihFunxQ&list=PL_cUvD4qzbkwp6pxx27pqgohrsP8v1Wj2&index=11
 
 
 

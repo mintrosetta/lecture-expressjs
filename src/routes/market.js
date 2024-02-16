@@ -7,6 +7,13 @@ const superMarkets = [
     { id: 3, store: "Albert", miles: 2.8 },
     { id: 4, store: "Trader Joes", miles: 3.5 },
 ];
+router.use((req, res, next) => {
+    if (req.session.user) {
+        next();
+    } else {
+        res.send(401);
+    }
+});
 
 router.get("", (req, res) => {
     // ดึง query parameter ออกมา
