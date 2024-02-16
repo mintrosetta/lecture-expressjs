@@ -64,6 +64,34 @@ router.post("", (req, res) => {
     res.send(201) // 201 created
 });
 
+router.get("/cart/item", (req, res) => {
+    const { cart } = req.session;
+
+    if (!cart) {
+        res.send("You have no cart");
+    } else {
+        res.send(cart);
+    }
+});
+
+router.post("/cart/item", (req, res) => {
+    const { item, quantity } = req.body;
+    const { cart } = req.session
+
+    const cartItem = { item, quantity };
+
+    if (cart) {
+        req.session.cart.items.push(cartItem);
+    } else {
+        req.session.cart = {
+            items: [cartItem]
+        };
+    }
+
+    // req.sessionID ดึง id ของ session
+    res.send(201);
+});
+
 module.exports = router;
 
 //https://www.youtube.com/watch?v=isURb7HQkn8&list=PL_cUvD4qzbkwp6pxx27pqgohrsP8v1Wj2&index=9

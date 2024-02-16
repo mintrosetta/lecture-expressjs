@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 const groceriesRoute = require("./routes/groceries");
 const marketRoute = require("./routes/market");
@@ -14,6 +15,11 @@ app.use((req, res, next) => {
     next();
 });
 app.use(cookieParser());
+app.use(session({
+    secret: "MintRosetta", // ใช้สำหรับเข้ารหัส session ของเรา
+    resave: false,
+    saveUninitialized: false,
+}))
 
 app.use("/api/groceries", groceriesRoute);
 app.use("/api/markets", marketRoute);
