@@ -1,6 +1,8 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+require("./database/index");
+
 
 const groceriesRoute = require("./routes/groceries");
 const marketRoute = require("./routes/market");
