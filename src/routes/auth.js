@@ -1,32 +1,51 @@
 const { Router } = require("express");
 const User = require("../database/schemas/user");
+const { hashPassword, comparePassword } = require("../utils/helper");
 
 const routers = Router();
 
-routers.post("/login", (req, res) => {
-    const { username, password } = req.body;
+routers.post("/login", async (req, res) => {
+    const { email, password } = req.body;
 
-    if (username && password) {
-        if (req.session.user) {
-            res.send(req.session.user);
-        } else {
-            req.session.user = {
-                username
-            }
+    // email and password should not be empty
+    if (!email || !password) return res.status(400).send({
+        success: false,
+        message: "Email and Password is required.",
+        data: null
+    });
 
-            res.send(req.session);
-        }
-    } else {
-        res.send(401);
-    }
+    // user should be found on database
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).send({
+        success: false,
+        message: "Username or Password is invalid.",
+        data: null
+    });
+
+    // password should be valid
+    const passwordIsValid = comparePassword(password, user.password);
+    if (!passwordIsValid) return res.status(401).send({
+        success: false,
+        message: "Username or Password is invalid.",
+        data: null
+    });
+
+    // create user session
+    req.session.user = user;
+
+    return res.status(200).send({
+        success: true,
+        message: "Successful.",
+        data: null
+    });
 });
 
 routers.post("/register", async (req, res) => {
-    const { username, password, email } = req.body;
+    const { email, password } = req.body;
 
-    if (!username && !password && !email) return res.send(400); 
+    if (!email || !password) return res.send(400);
 
-    const user = await User.findOne({ $or: [{username}, {email}] });
+    const user = await User.findOne({ email });
     if (user) {
         res.status(400).send({
             success: false,
@@ -34,10 +53,10 @@ routers.post("/register", async (req, res) => {
             data: null
         });
     } else {
+        const passwordHashed = hashPassword(password);
         const newUser = await User.create({
-            username: username,
-            password: password,
-            email: email
+            email: email,
+            password: passwordHashed,
         });
         newUser.save();
 
