@@ -43,29 +43,31 @@ routers.post("/login", async (req, res) => {
 routers.post("/register", async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) return res.send(400);
+    if (!email || !password) return res.status(400).send({
+        success: false,
+        message: "Email and Password is required.",
+        data: null
+    });
 
     const user = await User.findOne({ email });
-    if (user) {
-        res.status(400).send({
-            success: false,
-            message: "User already exists.",
-            data: null
-        });
-    } else {
-        const passwordHashed = hashPassword(password);
-        const newUser = await User.create({
-            email: email,
-            password: passwordHashed,
-        });
-        newUser.save();
+    if (!user) return res.status(400).send({
+        success: false,
+        message: "User already exists.",
+        data: null
+    });
 
-        res.status(201).send({
-            success: true,
-            message: "Successful.",
-            data: null
-        })
-    }
+    const passwordHashed = hashPassword(password);
+    const newUser = await User.create({
+        email: email,
+        password: passwordHashed,
+    });
+    newUser.save();
+
+    return res.status(201).send({
+        success: true,
+        message: "Successful.",
+        data: null
+    });
 });
 
 module.exports = routers;
