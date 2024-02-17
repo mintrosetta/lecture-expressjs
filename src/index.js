@@ -1,9 +1,7 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
 require("./database/index");
 
-
+// routers
 const groceriesRoute = require("./routes/groceries");
 const marketRoute = require("./routes/market");
 const authRoute = require("./routes/auth");
@@ -17,12 +15,14 @@ app.use((req, res, next) => {
     console.log(req.method + " " + req.url);
     next();
 });
-app.use(cookieParser());
-app.use(session({
+app.use(require("cookie-parser")());
+app.use(require("express-session")({
     secret: "MintRosetta", // ใช้สำหรับเข้ารหัส session ของเรา
     resave: false,
     saveUninitialized: false,
 }));
+app.use(require("passport").initialize()); // เริ่มต้น passport
+app.use(require("passport").session()); // เปิดใช้งาน session ให้กับ passport
 
 app.use("/api/auth", authRoute);
 app.use("/api/groceries", groceriesRoute);
