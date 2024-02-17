@@ -1,5 +1,6 @@
 const express = require("express");
 require("./database/index");
+require("./strategies/local");
 
 // routers
 const groceriesRoute = require("./routes/groceries");
